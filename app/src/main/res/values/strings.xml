@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Magic 8 Ball</string>
+    <string name="magic8BallDefault">See your fortune!</string>
+    <string name="magicUserDefault">Shake the Device!</string>
+
+    <string name="turn_bluetooth_on">Turn Bluetooth on</string>
+    <string name="turn_bluetooth_off">Turn Bluetooth off</string>
+
+    <string name="magicword0">It is certain</string>
+    <string name="magicword1">As I see it, yes</string>
+    <string name="magicword2">Ask again later</string>
+    <string name="magicword3">Don\'t count on it</string>
+    <string name="magicword4">It is decidedly so</string>
+    <string name="magicword5">Most likely</string>
+    <string name="magicword6">Reply hazy, try again</string>
+    <string name="magicword7">My reply is no</string>
+    <string name="magicword8">Without a doubt</string>
+    <string name="magicword9">Outlook good</string>
+    <string name="magicword10">Better not tell you now</string>
+    <string name="magicword11">My sources say no</string>
+    <string name="magicword12">Yes definitely</string>
+    <string name="magicword13">Yes</string>
+    <string name="magicword14">Cannot predict now</string>
+    <string name="magicword15">Outlook not so good</string>
+    <string name="magicword16">You may rely on it</string>
+    <string name="magicword17">Signs point to yes</string>
+    <string name="magicword18">Concentrate and ask again</string>
+    <string name="magicword19">Very doubtful</string>
+    <string name="show_paired_devices">Show paired devices</string>
+
+</resources>
