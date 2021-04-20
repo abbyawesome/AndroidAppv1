@@ -27,5 +27,7 @@
     <string name="magicword18">Concentrate and ask again</string>
     <string name="magicword19">Very doubtful</string>
     <string name="show_paired_devices">Show paired devices</string>
+    <string name="warning_high_bpm_detected">Warning: High BPM Detected</string>
+    <string name="receiving_messages">Receiving Messages</string>
 
 </resources>

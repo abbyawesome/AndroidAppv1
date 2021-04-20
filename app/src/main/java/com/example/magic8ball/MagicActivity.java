@@ -13,7 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +46,9 @@ public class MagicActivity extends AppCompatActivity {
     private BluetoothAdapter mBtAdapter = null;
 
     //views
-    private TextView mUserText;
+    private TextView mHeartRateTxt;
+    private Button mBadBtn;
+    private TextView mResponseTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,11 @@ public class MagicActivity extends AppCompatActivity {
         setContentView(R.layout.activity_magic);
 
         //view ids
-        mUserText = findViewById(R.id.magic8BallTv);
+        //mUserText = findViewById(R.id.magic8BallTv);
+        mHeartRateTxt = findViewById(R.id.magicHeartRateTv);
+        mResponseTv = findViewById(R.id.magicDataTv);
+        mBadBtn = findViewById(R.id.magicHiBPMBtn);
+        mBadBtn.setOnClickListener(v -> highBPMButton());
 
         //sensor stuff
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -104,6 +113,20 @@ public class MagicActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
+    /*
+    high BPM button sends off that we're ok now
+     */
+    private void highBPMButton() {
+        vibrate(false);
+
+        //send button pressed
+        send("1,0,0,0.0,1.0\n");
+
+        //send button released
+        send("0,0,0,0.0,1.0\n");
+
+        mBadBtn.setVisibility(View.INVISIBLE);
+    }
 
     /*
     detect if phone was shaken
@@ -121,7 +144,7 @@ public class MagicActivity extends AppCompatActivity {
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * .9f + delta;
 
-            if (mAccel > 9.5) {
+            if (mAccel > 11) {
                 Toast.makeText(getApplicationContext(),"Shake detected",Toast.LENGTH_SHORT).show();
                 //send button pressed
                 send("1,0,0,0.0,1.0\n");
@@ -153,56 +176,56 @@ public class MagicActivity extends AppCompatActivity {
         sensorManager.unregisterListener(shakeListener);
     }
 
-    /*
-    shake to get string
-     */
-    public void shakeString(String randomNumber) {
-        String msg;
-        Integer newVal = Integer.parseInt(randomNumber,16);
-        switch(newVal) {
-            case 0:
-                msg = "It is certain";
-                break;
-            case 1:
-                msg = "As I see it, yes";
-                break;
-            case 2:
-                msg = "Ask again later";
-                break;
-            case 3:
-                msg = "Don't count on it";
-                break;
-            case 4:
-                msg = "It is decidedly so";
-                break;
-            case 5:
-                msg = "Most likely";
-                break;
-            case 6:
-                msg = "Reply hazy, try again";
-                break;
-            case 7:
-                msg = "My reply is no";
-                break;
-            case 8:
-                msg = "Without a doubt";
-                break;
-            case 9:
-                msg = "Outlook good";
-                break;
-            case 10:
-                msg = "Better not tell you now";
-                break;
-            case 11:
-                msg = "My sources say no";
-                break;
-            default:
-                msg = randomNumber;
-                break;
-        }
-
-        mUserText.setText(msg);
-    }
+//    /*
+//    shake to get string
+//     */
+//    public void shakeString(String randomNumber) {
+//        String msg;
+//        Integer newVal = Integer.parseInt(randomNumber,16);
+//        switch(newVal) {
+//            case 0:
+//                msg = "It is certain";
+//                break;
+//            case 1:
+//                msg = "As I see it, yes";
+//                break;
+//            case 2:
+//                msg = "Ask again later";
+//                break;
+//            case 3:
+//                msg = "Don't count on it";
+//                break;
+//            case 4:
+//                msg = "It is decidedly so";
+//                break;
+//            case 5:
+//                msg = "Most likely";
+//                break;
+//            case 6:
+//                msg = "Reply hazy, try again";
+//                break;
+//            case 7:
+//                msg = "My reply is no";
+//                break;
+//            case 8:
+//                msg = "Without a doubt";
+//                break;
+//            case 9:
+//                msg = "Outlook good";
+//                break;
+//            case 10:
+//                msg = "Better not tell you now";
+//                break;
+//            case 11:
+//                msg = "My sources say no";
+//                break;
+//            default:
+//                msg = randomNumber;
+//                break;
+//        }
+//
+//        mHeartRateTxt.setText(msg);
+//    }
 
 
     /*
@@ -270,8 +293,7 @@ public class MagicActivity extends AppCompatActivity {
     display message from handler in text view
      */
     private void msg(String message) {
-        TextView statusView = findViewById(R.id.magic8BallTv);
-        statusView.setText(message);
+        mResponseTv.setText(message);
     }
 
     /*
@@ -348,6 +370,38 @@ public class MagicActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    display the heart rate
+     */
+    private void heartRate(String r, String g, String b) {
+        String display = r + g + b;
+        mHeartRateTxt.setText(display);
+
+        int val = Integer.parseInt(display,16);
+
+        if (val > 130) {
+            //high heart rate, turn on button
+            mBadBtn.setVisibility(View.VISIBLE);
+            vibrate(true);
+        }
+    }
+
+    /*
+    vibrate the phone
+     */
+    private void vibrate(boolean on) {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        if(on) {
+            //start with no delay
+            //vibrate for 100ms, wait 1000ms, and repeat
+            long[] pattern = {0, 100, 1000};
+            v.vibrate(pattern,0);
+        } else {
+            v.cancel();
+        }
+
+    }
 
     /*
     basically hijack the color part here to use for layout string
@@ -361,8 +415,20 @@ public class MagicActivity extends AppCompatActivity {
         //check length
         if (parameters.length == 7) {
             String color = parameters[1];
-            color = color.substring(3,5);
-            shakeString(color);
+            // 0 = #
+            // 1-3 = r
+            // 3-5 = g
+            // 5-7 = b
+            // 7-9 = alpha
+
+            //color = color.substring(3,5);
+            //shakeString(color);
+
+            String red = color.substring(1,3);
+            String green = color.substring(3,5);
+            String blue = color.substring(5,7);
+
+            heartRate(red,green,blue);
 
         } else {
             invalid = true;
