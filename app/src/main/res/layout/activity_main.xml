@@ -48,22 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
-        app:layout_constraintTop_toBottomOf="@+id/mainShowPairedBtn"
-        app:layout_constraintBottom_toTopOf="@+id/mainGo2LL"/>
+        app:layout_constraintTop_toBottomOf="@+id/mainShowPairedBtn"/>
 
-    <LinearLayout
-        android:id="@+id/mainGo2LL"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/mainGo2Magicless"
-            android:text="Go to magicless"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

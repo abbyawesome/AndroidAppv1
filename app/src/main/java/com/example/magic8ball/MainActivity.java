@@ -62,7 +62,7 @@ public class MainActivity
         mBtOffBtn = findViewById(R.id.mainBluetoothOffBtn);
         mRefreshBtn = findViewById(R.id.mainShowPairedBtn);
         mPairedLv = findViewById(R.id.mainShowPairedLv);
-        mGo2MagiclessBtn = findViewById(R.id.mainGo2Magicless);
+        //mGo2MagiclessBtn = findViewById(R.id.mainGo2Magicless);
 
         //set up array adapter
         mBTArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
@@ -105,12 +105,12 @@ public class MainActivity
             }
         });
 
-        mGo2MagiclessBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToMagicless();
-            }
-        });
+//        mGo2MagiclessBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                goToMagicless();
+//            }
+//        });
     }
 
     @Override
@@ -163,13 +163,13 @@ public class MainActivity
     }
 
 
-    /*
-    Go to magicless activity
-     */
-    private void goToMagicless() {
-        Intent intent = new Intent(MainActivity.this,MagicNoBtActivity.class);
-        startActivity(intent);
-    }
+//    /*
+//    Go to magicless activity
+//     */
+//    private void goToMagicless() {
+//        Intent intent = new Intent(MainActivity.this,MagicNoBtActivity.class);
+//        startActivity(intent);
+//    }
 
 
     /*

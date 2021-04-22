@@ -17,6 +17,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +28,11 @@ import java.util.Objects;
 
 public class MagicActivity extends AppCompatActivity {
 
-    //shake sensors
-    private SensorManager sensorManager;
-    private float mAccel;
-    private float mAccelCurrent;
-    private float mAccelLast;
+//    //shake sensors
+//    private SensorManager sensorManager;
+//    private float mAccel;
+//    private float mAccelCurrent;
+//    private float mAccelLast;
 
     //from main
     String deviceAddress = null;
@@ -46,9 +47,10 @@ public class MagicActivity extends AppCompatActivity {
     private BluetoothAdapter mBtAdapter = null;
 
     //views
-    private TextView mHeartRateTxt;
+    private ImageView mHeartRateImg;
     private Button mBadBtn;
     private TextView mResponseTv;
+    private Button mOverrideBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,20 +59,22 @@ public class MagicActivity extends AppCompatActivity {
 
         //view ids
         //mUserText = findViewById(R.id.magic8BallTv);
-        mHeartRateTxt = findViewById(R.id.magicHeartRateTv);
+        mHeartRateImg = findViewById(R.id.magicHeartRateIv);
         mResponseTv = findViewById(R.id.magicDataTv);
         mBadBtn = findViewById(R.id.magicHiBPMBtn);
         mBadBtn.setOnClickListener(v -> highBPMButton());
+        mOverrideBtn = findViewById(R.id.magicOverrideBtn);
+        mOverrideBtn.setOnClickListener(v -> highBPMButton());
 
-        //sensor stuff
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Objects.requireNonNull(sensorManager).registerListener(
-                shakeListener,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-        mAccel = 10f;
-        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
+//        //sensor stuff
+//        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+//        Objects.requireNonNull(sensorManager).registerListener(
+//                shakeListener,
+//                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+//                SensorManager.SENSOR_DELAY_NORMAL);
+//        mAccel = 10f;
+//        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+//        mAccelLast = SensorManager.GRAVITY_EARTH;
 
         //initialize BtManagerThread
         mBtThread = new BtManagerThread(this, mHandler);
@@ -128,53 +132,53 @@ public class MagicActivity extends AppCompatActivity {
         mBadBtn.setVisibility(View.INVISIBLE);
     }
 
-    /*
-    detect if phone was shaken
-    implement send w/ bluetooth to pi on this later
-     */
-    private final SensorEventListener shakeListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
+//    /*
+//    detect if phone was shaken
+//    implement send w/ bluetooth to pi on this later
+//     */
+//    private final SensorEventListener shakeListener = new SensorEventListener() {
+//        @Override
+//        public void onSensorChanged(SensorEvent event) {
+//            float x = event.values[0];
+//            float y = event.values[1];
+//            float z = event.values[2];
+//
+//            mAccelLast = mAccelCurrent;
+//            mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
+//            float delta = mAccelCurrent - mAccelLast;
+//            mAccel = mAccel * .9f + delta;
+//
+//            if (mAccel > 11) {
+//                Toast.makeText(getApplicationContext(),"Shake detected",Toast.LENGTH_SHORT).show();
+//                //send button pressed
+//                send("1,0,0,0.0,1.0\n");
+//
+//                //send button released
+//                send("0,0,0,0.0,1.0\n");
+//            }
+//        }
+//
+//        @Override
+//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//
+//        }
+//    };
 
-            mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
-            float delta = mAccelCurrent - mAccelLast;
-            mAccel = mAccel * .9f + delta;
-
-            if (mAccel > 11) {
-                Toast.makeText(getApplicationContext(),"Shake detected",Toast.LENGTH_SHORT).show();
-                //send button pressed
-                send("1,0,0,0.0,1.0\n");
-
-                //send button released
-                send("0,0,0,0.0,1.0\n");
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
-    };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(
-                shakeListener,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(shakeListener);
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        sensorManager.registerListener(
+//                shakeListener,
+//                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+//                SensorManager.SENSOR_DELAY_NORMAL);
+//
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        sensorManager.unregisterListener(shakeListener);
+//    }
 
 //    /*
 //    shake to get string
@@ -374,15 +378,16 @@ public class MagicActivity extends AppCompatActivity {
     display the heart rate
      */
     private void heartRate(String r, String g, String b) {
-        String display = r + g + b;
-        mHeartRateTxt.setText(display);
+        int val = Integer.parseInt(r,16);
 
-        int val = Integer.parseInt(display,16);
-
-        if (val > 130) {
+        if (val > 5) {
             //high heart rate, turn on button
             mBadBtn.setVisibility(View.VISIBLE);
             vibrate(true);
+            mHeartRateImg.setImageResource(R.drawable.bad_foreground);
+        } else {
+            mHeartRateImg.setImageResource(R.drawable.good_foreground);
+            vibrate(false);
         }
     }
 

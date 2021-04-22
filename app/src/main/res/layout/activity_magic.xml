@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/magicUserTv"
-        android:layout_width="237dp"
-        android:layout_height="130dp"
+        android:layout_width="389dp"
+        android:layout_height="78dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/lobster"
         android:gravity="center"
@@ -37,18 +37,25 @@
         tools:layout_editor_absoluteX="0dp"
         android:visibility="invisible"/>
 
-    <TextView
-        android:id="@+id/magicHeartRateTv"
-        android:layout_width="342dp"
-        android:layout_height="193dp"
+    <ImageView
+        android:id="@+id/magicHeartRateIv"
+        android:layout_width="419dp"
+        android:layout_height="328dp"
         android:gravity="center"
-        android:text=""
+        android:src="@mipmap/good"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/magicHiBPMBtn"
-        app:layout_constraintVertical_bias="0.228" />
+        app:layout_constraintVertical_bias="0.095" />
+
+    <Button
+        android:id="@+id/magicOverrideBtn"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toBottomOf="@+id/magicHeartRateIv"
+        android:text="Override Button"
+        />
 
     <TextView
         android:id="@+id/magicDataTv"
@@ -59,7 +66,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/magicHeartRateTv"
+        app:layout_constraintTop_toBottomOf="@+id/magicHeartRateIv"
         app:layout_constraintVertical_bias="1.0" />
 
 
