@@ -51,6 +51,7 @@ public class MagicActivity extends AppCompatActivity {
     private Button mBadBtn;
     private TextView mResponseTv;
     private Button mOverrideBtn;
+    private TextView mCounterTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,20 +62,11 @@ public class MagicActivity extends AppCompatActivity {
         //mUserText = findViewById(R.id.magic8BallTv);
         mHeartRateImg = findViewById(R.id.magicHeartRateIv);
         mResponseTv = findViewById(R.id.magicDataTv);
+        mCounterTv = findViewById(R.id.magicUserTv);
         mBadBtn = findViewById(R.id.magicHiBPMBtn);
         mBadBtn.setOnClickListener(v -> highBPMButton());
         mOverrideBtn = findViewById(R.id.magicOverrideBtn);
         mOverrideBtn.setOnClickListener(v -> highBPMButton());
-
-//        //sensor stuff
-//        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-//        Objects.requireNonNull(sensorManager).registerListener(
-//                shakeListener,
-//                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-//                SensorManager.SENSOR_DELAY_NORMAL);
-//        mAccel = 10f;
-//        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-//        mAccelLast = SensorManager.GRAVITY_EARTH;
 
         //initialize BtManagerThread
         mBtThread = new BtManagerThread(this, mHandler);
@@ -132,104 +124,37 @@ public class MagicActivity extends AppCompatActivity {
         mBadBtn.setVisibility(View.INVISIBLE);
     }
 
-//    /*
-//    detect if phone was shaken
-//    implement send w/ bluetooth to pi on this later
-//     */
-//    private final SensorEventListener shakeListener = new SensorEventListener() {
-//        @Override
-//        public void onSensorChanged(SensorEvent event) {
-//            float x = event.values[0];
-//            float y = event.values[1];
-//            float z = event.values[2];
-//
-//            mAccelLast = mAccelCurrent;
-//            mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
-//            float delta = mAccelCurrent - mAccelLast;
-//            mAccel = mAccel * .9f + delta;
-//
-//            if (mAccel > 11) {
-//                Toast.makeText(getApplicationContext(),"Shake detected",Toast.LENGTH_SHORT).show();
-//                //send button pressed
-//                send("1,0,0,0.0,1.0\n");
-//
-//                //send button released
-//                send("0,0,0,0.0,1.0\n");
-//            }
-//        }
-//
-//        @Override
-//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//
-//        }
-//    };
+    /*
+   vibrate the phone
+    */
+    private void vibrate(boolean on) {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        sensorManager.registerListener(
-//                shakeListener,
-//                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-//                SensorManager.SENSOR_DELAY_NORMAL);
-//
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        sensorManager.unregisterListener(shakeListener);
-//    }
+        if(on) {
+            //start with no delay
+            //vibrate for 100ms, wait 1000ms, and repeat
+            long[] pattern = {0, 100, 1000};
+            v.vibrate(pattern,0);
+        } else {
+            v.cancel();
+        }
 
-//    /*
-//    shake to get string
-//     */
-//    public void shakeString(String randomNumber) {
-//        String msg;
-//        Integer newVal = Integer.parseInt(randomNumber,16);
-//        switch(newVal) {
-//            case 0:
-//                msg = "It is certain";
-//                break;
-//            case 1:
-//                msg = "As I see it, yes";
-//                break;
-//            case 2:
-//                msg = "Ask again later";
-//                break;
-//            case 3:
-//                msg = "Don't count on it";
-//                break;
-//            case 4:
-//                msg = "It is decidedly so";
-//                break;
-//            case 5:
-//                msg = "Most likely";
-//                break;
-//            case 6:
-//                msg = "Reply hazy, try again";
-//                break;
-//            case 7:
-//                msg = "My reply is no";
-//                break;
-//            case 8:
-//                msg = "Without a doubt";
-//                break;
-//            case 9:
-//                msg = "Outlook good";
-//                break;
-//            case 10:
-//                msg = "Better not tell you now";
-//                break;
-//            case 11:
-//                msg = "My sources say no";
-//                break;
-//            default:
-//                msg = randomNumber;
-//                break;
-//        }
-//
-//        mHeartRateTxt.setText(msg);
-//    }
+    }
+
+
+    /*
+    lazy function to count how many bad heart rates we've gotten
+     */
+    private void newBPM(Boolean good) {
+        String string = "bad";
+
+        if (good) {
+            string = "good";
+        }
+
+        String msg = "Received " + string + " BPM";
+        mCounterTv.setText(msg);
+    }
 
 
     /*
@@ -377,7 +302,7 @@ public class MagicActivity extends AppCompatActivity {
     /*
     display the heart rate
      */
-    private void heartRate(String r, String g, String b) {
+    private void heartRate(String r) {
         int val = Integer.parseInt(r,16);
 
         if (val > 5) {
@@ -385,28 +310,15 @@ public class MagicActivity extends AppCompatActivity {
             mBadBtn.setVisibility(View.VISIBLE);
             vibrate(true);
             mHeartRateImg.setImageResource(R.drawable.bad_foreground);
+            newBPM(false);
         } else {
             mHeartRateImg.setImageResource(R.drawable.good_foreground);
             vibrate(false);
+            newBPM(true);
         }
     }
 
-    /*
-    vibrate the phone
-     */
-    private void vibrate(boolean on) {
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        if(on) {
-            //start with no delay
-            //vibrate for 100ms, wait 1000ms, and repeat
-            long[] pattern = {0, 100, 1000};
-            v.vibrate(pattern,0);
-        } else {
-            v.cancel();
-        }
-
-    }
 
     /*
     basically hijack the color part here to use for layout string
@@ -430,10 +342,8 @@ public class MagicActivity extends AppCompatActivity {
             //shakeString(color);
 
             String red = color.substring(1,3);
-            String green = color.substring(3,5);
-            String blue = color.substring(5,7);
 
-            heartRate(red,green,blue);
+            heartRate(red);
 
         } else {
             invalid = true;

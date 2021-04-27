@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Magic 8 Ball</string>
+    <string name="app_name">SwimSafe Band</string>
     <string name="magic8BallDefault">See your fortune!</string>
-    <string name="magicUserDefault">Device is on!</string>
+    <string name="magicUserDefault">Hello World!</string>
 
     <string name="turn_bluetooth_on">Turn Bluetooth on</string>
     <string name="turn_bluetooth_off">Turn Bluetooth off</string>
